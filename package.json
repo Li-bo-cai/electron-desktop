@@ -1,0 +1,19 @@
+{
+  "name": "electron-desktop",
+  "version": "1.0.0",
+  "description": "electron-desktop",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "electron",
+    "electron-desktop"
+  ],
+  "author": "lbc",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^17.2.0"
+  }
+}
