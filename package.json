@@ -5,7 +5,8 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "test": "chcp 65001 && nodemon --watch main.js --exec electron ."
+    "test": "chcp 65001 && nodemon --watch main.js --exec electron .",
+    "build": "electron-builder"
   },
   "keywords": [
     "electron",
@@ -14,6 +15,7 @@
   "author": "lbc",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^17.2.0"
+    "electron": "^17.2.0",
+    "electron-builder": "^22.14.13"
   }
 }
