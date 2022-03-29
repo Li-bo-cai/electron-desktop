@@ -1,0 +1,11 @@
+html {
+    /* 将屏幕的宽度设置为24rem,从而自动实现将内容按照屏幕的大小进行缩放 */
+    /* 屏幕宽高比16:9 */
+    font-size: calc(100vw / 50);
+}
+
+/* 声明字体 */
+@font-face {
+    font-family: electronicFont;
+    src: url(./assets/DS-DIGIT.TTF);
+}
