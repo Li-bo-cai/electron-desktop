@@ -1,5 +1,5 @@
 // 保持一个对于 window 对象的全局引用，不然，当 JavaScript 被 GC
-const { app, BrowserWindow, Tray, nativeImage, screen, Menu, MenuItem, dialog } = require('electron')
+const { app, BrowserWindow, Tray, nativeImage, screen, Menu, MenuItem, dialog, ipcMain, ipcRenderer } = require('electron')
 const electron = require('electron')
 // 引入路径
 const path = require('path')
@@ -11,6 +11,12 @@ const iconPath = path.join(__dirname, './src/icon/favicon.png')
 let mainWindow = null;
 // 定义一个托盘
 let tray = null
+// 打开一个新盒子的方法
+const openNewWindow = require('./src/assets/js/openNewWin')
+// 获取热更新方法
+const upgradeFn = require('./src/assets/js/upgrade')
+
+console.log(ipcRenderer,'============');
 
 function createWindow() {
     // 获取屏幕当前宽高
@@ -27,11 +33,15 @@ function createWindow() {
     // 设置不需要菜单选项
     mainWindow.setMenu(null)
 
-    // 加载应用的 index.html
-    mainWindow.loadURL('file://' + __dirname + './src/index.html');
-
     // 打开开发工具
     mainWindow.openDevTools();
+    // 处理window.open跳转   在浏览器窗口显示
+    mainWindow.webContents.setWindowOpenHandler((data) => {
+        openNewWindow(data.url)
+        return {
+            action: 'deny'
+        }
+    })
     // 当 window 开始关闭，这个事件会被触发
     mainWindow.on('close', (e) => {
         e.preventDefault(); //阻止默认行为
@@ -52,6 +62,7 @@ function createWindow() {
             }
         })
     })
+    // 设置右键功能
     menu.append(new MenuItem({ label: '复制', role: 'copy' }))
     menu.append(new MenuItem({ label: '粘贴', role: 'paste' }))
     menu.append(new MenuItem({ label: '刷新', role: 'reload' }))
@@ -96,6 +107,7 @@ function createWindow() {
             mainWindow.show()
         }
     })
+
     // 当 window 被关闭，这个事件会被触发
     mainWindow.on('closed', function () {
         // 取消引用 window 对象，如果你的应用支持多窗口的话，
@@ -103,19 +115,22 @@ function createWindow() {
         // 但这次不是。
         mainWindow = null;
     });
+
+    // 加载应用的 index.html
+    mainWindow.loadURL('file://' + __dirname + './src/index.html');
 }
 
 // 当 Electron 完成了初始化并且准备创建浏览器窗口的时候
 // 这个方法就被调用
 app.whenReady().then(() => {
     createWindow()
-    // 设置右键功能
 })
 
-// app.on('ready', function () {
-//     createWindow()
-// });
-
+// app.on('ready', () => {
+//     setTimeout(() => {
+//         require('./src/assets/js/render')
+//     }, 1000);
+// })
 
 // 当所有窗口被关闭了，退出。
 app.on('window-all-closed', function () {
@@ -130,4 +145,10 @@ app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
         createWindow()
     }
+})
+
+// 监听热更新
+ipcMain.on('upgrading', (evt, url) => {
+    console.log(evt, url);
+    // upgradeFn(url)
 })

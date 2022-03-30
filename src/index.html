@@ -15,16 +15,23 @@
 
     #wv {
         margin: 0;
-        width: 50rem;
-        height: 50rem;
+        width: 50vh;
+        height: 50vh;
+    }
+
+    #electron_app {
+        background: red;
     }
 </style>
 
 <body>
     <!-- <div>hello</div> -->
     <div>
-        <div>hello</div>
-        <webview id="wv" src="http://www.google.com/" rel="external nofollow" nodeintegration></webview>
+        <div id="btn">hello</div>
+        <a href="https://www.baidu.com" target="_blank">百度一下，你就知道~</a>
+        <div id="electron_app">
+            <webview id="wv" src="https://www.baidu.com"></webview>
+        </div>
     </div>
 </body>
 

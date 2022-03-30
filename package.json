@@ -15,6 +15,7 @@
   "author": "lbc",
   "license": "ISC",
   "devDependencies": {
+    "adm-zip": "^0.5.9",
     "electron": "^17.2.0",
     "electron-builder": "^22.14.13"
   }
