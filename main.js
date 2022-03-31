@@ -135,6 +135,8 @@ app.whenReady().then(() => {
     createWindow()
 }).then(() => {
     contrastVersion(localVersion)
+}).then(() => {
+    new Notification({ title: '123', body: '132' }).show()
 })
 
 // app.on('ready', () => {
