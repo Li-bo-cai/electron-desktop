@@ -1,5 +1,7 @@
 // 保持一个对于 window 对象的全局引用，不然，当 JavaScript 被 GC
-const { app, BrowserWindow, Tray, nativeImage, screen, Menu, MenuItem, dialog, ipcMain, ipcRenderer } = require('electron')
+const { app, BrowserWindow, Tray, nativeImage, screen, Menu, MenuItem, dialog, ipcMain, shell, Notification } = require('electron')
+// 获取本地版本号
+const localVersion = app.getVersion()
 const electron = require('electron')
 // 引入路径
 const path = require('path')
@@ -12,11 +14,11 @@ let mainWindow = null;
 // 定义一个托盘
 let tray = null
 // 打开一个新盒子的方法
-const openNewWindow = require('./src/assets/js/openNewWin')
+const openNewWindow = require('./src/assets/js/createWindow')
 // 获取热更新方法
-const upgradeFn = require('./src/assets/js/upgrade')
-
-console.log(ipcRenderer,'============');
+const hotUpdate = require('./src/assets/js/upgrade')
+// 调用版本比较方法
+const contrastVersion = require('./src/assets/js/render')
 
 function createWindow() {
     // 获取屏幕当前宽高
@@ -27,9 +29,11 @@ function createWindow() {
         height: height / 2,
         icon: iconPath,
         webPreferences: {
-            nodeIntegration: true
+            nodeIntegration: true,
+            preload: path.join(__dirname, '\\src\\assets\\js\\message.js')
         }
     });
+    // console.log(__dirname + '\\src\\assets\\js\\render.js');
     // 设置不需要菜单选项
     mainWindow.setMenu(null)
 
@@ -37,7 +41,8 @@ function createWindow() {
     mainWindow.openDevTools();
     // 处理window.open跳转   在浏览器窗口显示
     mainWindow.webContents.setWindowOpenHandler((data) => {
-        openNewWindow(data.url)
+        shell.openExternal(data.url)
+        // openNewWindow(data.url, iconPath)
         return {
             action: 'deny'
         }
@@ -119,17 +124,20 @@ function createWindow() {
     // 加载应用的 index.html
     mainWindow.loadURL('file://' + __dirname + './src/index.html');
 }
-
+// 监听热更新
+ipcMain.on('upgrading', (evt, arg) => {
+    // hotUpdate()
+    openNewWindow(arg)
+})
 // 当 Electron 完成了初始化并且准备创建浏览器窗口的时候
 // 这个方法就被调用
 app.whenReady().then(() => {
     createWindow()
+}).then(() => {
+    contrastVersion(localVersion)
 })
 
 // app.on('ready', () => {
-//     setTimeout(() => {
-//         require('./src/assets/js/render')
-//     }, 1000);
 // })
 
 // 当所有窗口被关闭了，退出。
@@ -145,10 +153,4 @@ app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
         createWindow()
     }
-})
-
-// 监听热更新
-ipcMain.on('upgrading', (evt, url) => {
-    console.log(evt, url);
-    // upgradeFn(url)
 })
