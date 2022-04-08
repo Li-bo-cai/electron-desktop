@@ -13,4 +13,10 @@
 
 # 打包
 
-4. npm run make
+4. npm run build
+
+5.  网络问题
+建议切换到国内镜像
+npm config set  electron_mirror  "https://npmmirror.com/mirrors/electron/"
+
+npm config set  electron_builder_binaries_mirror  "https://mirrors.huaweicloud.com/electron-builder-binaries/"
